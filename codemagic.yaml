@@ -6,11 +6,22 @@ workflows:
     environment:
       flutter: stable
     scripts:
-      - name: Ensure Flutter platform projects exist
+      - name: Generate Android runner
         script: |
-          if [ ! -d android ] || [ ! -d ios ]; then
-            flutter create --platforms=android,ios,macos,windows .
+          set -e
+          if [ ! -f android/settings.gradle ]; then
+            flutter create \
+              --project-name novastream_player \
+              --org com.novastream \
+              --platforms=android \
+              .
           fi
+      - name: Verify Android runner
+        script: |
+          set -e
+          test -f android/settings.gradle
+          test -f android/app/build.gradle
+          test -f android/app/src/main/AndroidManifest.xml
       - name: Install dependencies
         script: flutter pub get
       - name: Analyze
@@ -31,9 +42,16 @@ workflows:
       groups:
         - novastream_build_secrets
     scripts:
-      - name: Ensure Android project exists
+      - name: Generate Android runner
         script: |
-          if [ ! -d android ]; then flutter create --platforms=android .; fi
+          set -e
+          if [ ! -f android/settings.gradle ]; then
+            flutter create \
+              --project-name novastream_player \
+              --org com.novastream \
+              --platforms=android \
+              .
+          fi
       - name: Install dependencies
         script: flutter pub get
       - name: Analyze
@@ -56,10 +74,15 @@ workflows:
       groups:
         - novastream_build_secrets
     scripts:
-      - name: Ensure iOS project exists
+      - name: Generate iOS runner
         script: |
-          if [ ! -d ios ] || [ ! -f ios/Runner.xcodeproj/project.pbxproj ]; then
-            flutter create --platforms=ios .
+          set -e
+          if [ ! -f ios/Runner.xcodeproj/project.pbxproj ]; then
+            flutter create \
+              --project-name novastream_player \
+              --org com.novastream \
+              --platforms=ios \
+              .
           fi
       - name: Install dependencies
         script: flutter pub get
