@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# CI-friendly Gradle launcher. Codemagic invokes chmod +x before Flutter builds.
+exec gradle "$@"
